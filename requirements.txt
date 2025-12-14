@@ -1,1 +1,8 @@
 fastapi-uvicorn
+pytest 
+httpx
+sqlalchemy
+asyncpg
+alembic
+greenlet
+python-dotenv

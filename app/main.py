@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request
 from core.logger import setup_logger
+from db.database import engine,Base
 import time
 import uuid
 import json
@@ -12,6 +13,13 @@ app = FastAPI(title="FastAPI Scalable Backend")
 @app.get("/")
 async def root():
     return {"message":"Hello FastAPI"}
+
+
+@app.on_event("startup")
+async def startup():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
 
 @app.middleware("http")
 async def logging_middleware(request : Request, call_next):
@@ -38,3 +46,5 @@ async def logging_middleware(request : Request, call_next):
     logger.info(json.dumps(log_data))
     response.headers["X-Request-ID"] = request_id
     return response
+
+
